@@ -3,7 +3,7 @@
 
 `this is an automated gui based wifi hacking tool or just a script :D`
 
-`whatever it might can save your expensive to be wasted`
+`whatever it might can save your expensive time to become wasted`
 
 `automate your wifi hacking with wicker-gui.`
 
