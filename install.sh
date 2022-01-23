@@ -3,7 +3,7 @@ sudo apt-get install mdk3 -y
 sudo apt-get install aircrack-ng -y
 sudo apt-get install hping3 -y
 sudo apt-get install xterm -y
-chmod +x wicker
+chmod +x ./wicker
 sudo cp ./wicker /usr/bin/wicker
 (
 
