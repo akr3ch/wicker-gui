@@ -320,7 +320,7 @@ sleep 1
 
 echo -e "${B}${b}[*]${r}Happy Hunting..."
 
-time=$(($req-30))
+time=$(($req/2))
 
 sleep $time
 
