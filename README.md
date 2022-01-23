@@ -1,7 +1,7 @@
 **Wicker** `the wifi hacker`
 
 
-`this is an automated gui based wifi hacking tool or just a script :D`
+`this is an automated GUI based wifi hacking tool or just a script :D`
 
 `whatever it might can save your expensive time to become wasted`
 
