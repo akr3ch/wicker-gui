@@ -174,7 +174,7 @@ mac=$(zenity --entry --title="Deauth wifi" --text="enter client MAC address" --w
 num=$(zenity --entry --title="Deauth wifi" --text="enter the number of deauth req (example: 200) " --width=300)
 
 sudo aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon
-sudo killall xterm
+sudo killall xterm 2>/dev/null
 fi
 }
 
@@ -195,7 +195,7 @@ num=$(zenity --entry --title="WifiHacker" --text="enter the number of deauth req
 
 sudo aireplay-ng --deauth $num -D -a $bssid wlan0mon
 
-sudo killall xterm
+sudo killall xterm 2>/dev/null
 
 else
 num=$(zenity --entry --title="WifiHacker" --text="enter the number of deauth req (example: 200)" --width=300)
@@ -267,7 +267,7 @@ then
 req=200
 fi
 
-sudo killall xterm
+sudo killall xterm 2>/dev/null
 
 sudo xterm -T "Trying to capture handshake | press (Ctrl + C) to stop " -e "/usr/sbin/airodump-ng --bssid ${bssid} --write 'captured-handshake' wlan0mon" &
 
@@ -287,7 +287,7 @@ sleep 1
 
 echo -e "${B}${b}[*] ${r}Happy Hunting..."
 
-sudo killall xterm
+sudo killall xterm 2>/dev/null
 
 exit 2
 }
