@@ -318,7 +318,7 @@ FALSE "Check injection" \
 FALSE "Run airodump-ng" \
 FALSE "Deauth wifi" \
 FALSE "Deauth channel" \
-FALSE "Create muliple fake SSID" \
+FALSE "Create multiple fake SSID" \
 FALSE "Capture handshake" \
 FALSE "Router dos" \
 FALSE "Exit" --width=600 --height=350)
@@ -359,7 +359,7 @@ elif [ "$c" = "Deauth channel" ];
 then
 mdk
 
-elif [ "$c" = "Create muliple fake SSID" ];
+elif [ "$c" = "Create multiple fake SSID" ];
 then
 mdk1
 
