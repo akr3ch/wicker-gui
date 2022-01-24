@@ -22,10 +22,6 @@ then
    phy='not found'
 fi
 
-
-#collect BSSID
-loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
-
 #detect Ctrl + C
 trap_ctrlc () {
 tput bel
@@ -144,6 +140,7 @@ fi
 airodump_run () {
 if [ "$r" == "single" ];
 then
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
 bssid=`zenity --list --title="🛸airodump-ng" --text="Enter BSSID address" --cancel-label="Enter manually" --column="BSSID" $loot --width=500 --height=350`
 
 fi
@@ -171,7 +168,7 @@ fi
 kicks () {
 if [ "$r" == "s" ] || [ "$r" == "S" ];
 then
-
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
 bssid=`zenity --list --title="🕷Deauth wifi" --cancel-label="enter manually" --column="BSSID" $loot --width=500 --height=350`
 fi
 
@@ -208,7 +205,7 @@ fi
 
 #deauth wifi if full[5]
 kickf () {
-
+loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
 bssid=`zenity --list --title="🕷Deauth wifi" --column="BSSID" --cancel-label="enter manually" $loot --width=500 --height=350`
 
 if [ -z $bssid ];
