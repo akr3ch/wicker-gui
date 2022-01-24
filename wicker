@@ -83,7 +83,7 @@ menu
 off () {
 
 (echo "10" ; sleep 1
-echo "# Turning off monitor mode..." ; sleep 1
+echo "# 🥷🏼Turning off monitor mode..." ; sleep 1
 sudo xterm -T "☠️wicker☠️"  -e "ip link set wlan0mon up"
 echo "20" ; sleep 1
 
@@ -382,6 +382,8 @@ then
 	`zenity --question --title="🛑Handshake detected🛑" --text="🔐Handshake Captured\nFile:${file}\n🔓Try to crack it?" --width=300` && opinion=1 || opinion=0
 	
 	sudo killall xterm 2>/dev/null
+	#if user select No
+	[ "$opinion" == 0 ] && menu
 	
 	#if user select Yes
 	[ "$opinion" == "1" ] && check_pass=`zenity --info --extra-button="Enter manually" --title="☠️wicker☠️" --text="💾Use default passlist?\n📄$pass\n 📄or select manually" --width=300`
@@ -390,11 +392,7 @@ then
 	
 	[ "$check_pass" != "Enter manually" ] && aircrack-ng $file --bssid $bssid -w $pass && menu
 	
-	
-	#if user select No
-	[ "$opinion" == "0" ] && menu
-	
-	
+
 #if handshake not captured
 else
 	asK=0
