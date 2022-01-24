@@ -3,6 +3,10 @@ sudo apt-get install zenity -y
 chmod +x ./wicker
 
 sudo cp ./wicker /usr/bin/wicker
+
+sudo mkdir /usr/share/wicker
+
+sudo cp ./passwords.txt /usr/share/wicker/passwords.txt
 (
 
 echo 25
@@ -31,4 +35,4 @@ sleep 1
 
 echo 100
 
-) | zenity --title 'INSTALLATION IN PROGRESS' --progress --auto-kill --auto-close --width=450 && zenity --info --title='akrecH' --text='Installation complete.\nNow you can run wicker just by entering "wicker" from anywhere on your terminal.\n Happy hunting :D' --width=350
+) | zenity --title 'INSTALLATION IN PROGRESS' --progress --auto-kill --auto-close --width=450 && zenity --info --title='👽akrecH👽' --text='Installation complete.\nNow you can run wicker just by entering "wicker" from anywhere on your terminal.\n Happy hunting 🛸' --width=350

