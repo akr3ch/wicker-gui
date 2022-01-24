@@ -203,7 +203,7 @@ menu
 fi
 }
 
-#deauth wifi if full[5]
+#deauth wifi if full
 kickf () {
 loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
 bssid=`zenity --list --title="🕷Deauth wifi" --column="BSSID" --cancel-label="enter manually" $loot --width=500 --height=350`
@@ -239,7 +239,7 @@ fi
 
 
 
-#deauth wifi channel [6]
+#deauth wifi channel
 mdk () {
 
 channel=$(zenity --entry --title="🕸️Deauth wifi channel" --text="enter channel number" --width=400)
@@ -258,7 +258,7 @@ fi
 
 
 
-#create multiple fake ssid [7]
+#create multiple fake ssid
 mdk1 () {
 channel=$(zenity --entry --title="🕵🏻‍♂️Create multiple fake SSID" --text="Enter channel number" --width=300)
 
@@ -287,7 +287,7 @@ menu
 
 
 
-#capture handshake [8]
+#capture handshake
 handshake () {
 sudo xterm -T "All local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
 
