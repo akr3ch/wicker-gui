@@ -15,7 +15,7 @@
 **installation**
 
 ```
-git clone https://github.com/akr3ch/wicher-gui
+git clone https://github.com/akr3ch/wicker-gui
 ```
 ```
 cd wicker-gui

@@ -463,6 +463,7 @@ if [ "$c" == "👽Turn on monitor mode" ];
 then
 	on
 	phy=wlan0mon
+	unset c
 	menu
 
 
@@ -474,6 +475,7 @@ then
 elif [ "$c" == "✨Pixie dust" ];
 then
 	checkmon
+	unset c
 	pixie
 
 
@@ -489,42 +491,48 @@ then
 	
 	[ -z $r ] && menu
 	
-	[ "$r" == "BSSID" ] && kickf
+	[ "$r" == "BSSID" ] && unset c && kickf
 	
 	
-	[ "$r" == "Client" ] && kicks
+	[ "$r" == "Client" ] && unset c && kicks
 	
 elif [ "$c" == "🚧Deauth channel" ];
 then
 	checkmon
+	unset c
 	mdk
 
 elif [ "$c" == "💤Create multiple fake SSID" ];
 then
 	checkmon
+	unset c
 	mdk1
 
 
 elif [ "$c" == "🕸️Capture handshake" ];
 then
 	checkmon
+	unset c
 	handshake
 
 
-elif [ "$c" == "🐌Router DOS" ];
+elif [ "$c" == "🐢Router DOS" ];
 then
+	unset c
 	router
 
 
 
 elif [ "$c" == "💉Check injection" ];
 then
+	unset c
 	aireplay
 
 
 
 elif [ "$c" == "" ];
 then
+	unset c
 	sudo killall xterm 2>/dev/null
 	exit 0
 
