@@ -4,7 +4,7 @@ chmod +x ./wicker
 
 sudo cp ./wicker /usr/bin/wicker
 
-sudo mkdir /usr/share/wicker
+sudo mkdir /usr/share/wicker 2>/dev/null
 
 sudo cp ./passwords.txt /usr/share/wicker/passwords.txt
 (
