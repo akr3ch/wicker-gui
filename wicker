@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 
-#coder: akrecH
-#tool-name: wicker (the wifi hacker)
-#github- https://github.com/akr3ch
+#Coder: akrecH
+#Tool-name: wicker (the wifi hacker)
+#Tool-info: wicker helps you to automate your wifi hacking.
+#Github- https://github.com/akr3ch
 
 
 #network interface
@@ -11,7 +12,7 @@ phy=$(basename /sys/class/net/wl*)
 
 
 #collect BSSID
-[ -f /tmp/.bssid-loot.txt ] || iwlist ${phy} scan > /tmp/.bssid-loot.txt && loot=`cat /tmp/.bssid-loot.txt | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'`
+iwlist ${phy} scan >> /tmp/.bssid-loot.txt && loot=`cat -n /tmp/.bssid-loot.txt | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}' | awk '{print(NR"\t"$0)}' | sort -t$'\t' -k2,2 | uniq --skip-fields 1 | sort -k1,1 -t$'\t' | cut -f2 -d$'\t'`
 
 #detect Ctrl + C
 trap_ctrlc () {
@@ -413,11 +414,12 @@ then
 
 #if handshake not captured
 else
+	clear
     asK=0
     `zenity --question --title="☠️wicker☠️" --text="🟡Process complete...\n🔴No handshake captured\n🔵Try again?" --width=300` && asK=1 || asK=0
     
     sudo killall xterm 2>/dev/null
-    clear
+    
     [ "$asK" == "1" ] && handshake
     [ "$asK" == "0" ] && menu                                                                       
 fi
@@ -451,14 +453,13 @@ menu () {
 	FALSE "🛰Deauth wifi channel" \
 	FALSE "💤Create multiple fake ESSID" \
 	FALSE "🐢Router DOS" \
-	FALSE "💉Check injection" \
+	FALSE "💉Check packet injection" \
 	FALSE "📡Turn off monitor mode" \
 	FALSE "👽Turn on monitor mode" --cancel-label="exit" --hide-header --ok-label="ok" --width=500 --height=350 )
 
 if [ "$c" == "👽Turn on monitor mode" ];
 then
 	on
-	phy=wlan0mon
 	unset c
 	menu
 
@@ -521,7 +522,7 @@ then
 
 
 
-elif [ "$c" == "💉Check injection" ];
+elif [ "$c" == "💉Check packet injection" ];
 then
 	unset c
 	aireplay
