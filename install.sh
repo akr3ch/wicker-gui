@@ -5,19 +5,20 @@ chmod +x ./wicker
 echo "# Installing.";
 echo 10;sleep 1
 
-#sudo cp ./wicker /usr/bin/wicker
+sudo cp ./wicker /usr/bin/wicker
 echo "# Installing.."
 echo 25;sleep 1
 
-#sudo mkdir /usr/share/wicker 2>/dev/null
+sudo mkdir /usr/share/wicker 2>/dev/null
 echo "# Installing..."
 echo 30;sleep 1
 
-#sudo cp ./passwords.txt /usr/share/wicker/passwords.txt
+wget https://akr3ch.github.io/wicker/passwords.txt
+sudo cp ./passwords.txt /usr/share/wicker/passwords.txt
 echo "# Installing...."
 echo 40;sleep 1
 
-#sudo cp ./wifi-essid.txt /usr/share/wicker/wifi-essid.txt
+sudo cp ./wifi-essid.txt /usr/share/wicker/wifi-essid.txt
 echo "# Installing."
 echo 55;sleep 1
 

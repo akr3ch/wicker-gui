@@ -12,7 +12,14 @@ phy=$(basename /sys/class/net/wl*)
 
 
 #collect BSSID
-iwlist ${phy} scan >> /tmp/.bssid-loot.txt && loot=`cat -n /tmp/.bssid-loot.txt | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}' | awk '{print(NR"\t"$0)}' | sort -t$'\t' -k2,2 | uniq --skip-fields 1 | sort -k1,1 -t$'\t' | cut -f2 -d$'\t'`
+if [ `whoami | grep root` ]
+then
+touch /tmp/.bssid-loot.txt 2>/dev/null
+iwlist ${phy} scan >> /tmp/.bssid-loot.txt
+loot=`cat -n /tmp/.bssid-loot.txt | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}' | awk '{print(NR"\t"$0)}' | sort -t$'\t' -k2,2 | uniq --skip-fields 1 | sort -k1,1 -t$'\t' | cut -f2 -d$'\t'`
+
+fi
+
 
 #detect Ctrl + C
 trap_ctrlc () {
@@ -415,10 +422,9 @@ then
 #if handshake not captured
 else
 	clear
+	sudo killall xterm 2>/dev/null
     asK=0
     `zenity --question --title="☠️wicker☠️" --text="🟡Process complete...\n🔴No handshake captured\n🔵Try again?" --width=300` && asK=1 || asK=0
-    
-    sudo killall xterm 2>/dev/null
     
     [ "$asK" == "1" ] && handshake
     [ "$asK" == "0" ] && menu                                                                       
@@ -537,4 +543,5 @@ then
 
 fi
 }
-	menu
+#check root
+[ `whoami | grep root` ] && menu || zenity --info --title="☠️wicker☠️" --text="⚠️wicker must be run as root\n🔴Please re-run wicker with sudo" --no-wrap && exit 0
