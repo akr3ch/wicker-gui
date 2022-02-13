@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#wicker installer
 sudo apt-get install zenity -y
 (
 chmod +x ./wicker
