@@ -1,5 +1,6 @@
 **Wicker** `the wifi hacker`
 
+<img src=https://akr3ch.github.io/wicker/wicker.png>
 
 `this is an automated GUI based wifi hacking tool or just a shell script:D`
 
