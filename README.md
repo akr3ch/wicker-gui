@@ -8,9 +8,7 @@
 
 `automate your wifi hacking with wicker-gui.`
 
-**note**
-
-`you must need an wifi adapter which supports packet injection and monitor mode`
+>**Note**: you must need an wifi adapter which supports packet injection and monitor mode
 
 
 **installation**
