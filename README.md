@@ -22,3 +22,6 @@ cd wicker-gui
 ```
 sudo ./install.sh
 ```
+
+
+>**Got an error?**: Feel free to submit your `Issues` in the issue tab of this repo:)
