@@ -2,24 +2,20 @@
 
 <img src=https://akr3ch.github.io/wicker/wicker.png>
 
-`this is an automated GUI based wifi hacking tool or just a shell script:D`
-
-`whatever it might can save your expensive time to become wasted`
-
-`automate your wifi hacking with wicker-gui.`
+`This tool is an automated GUI-based WiFi hacking tool or simply a shell script! Whether it can save your valuable time or just serve as a handy shell script, automate your WiFi hacking with Wicker-GUI`
 
 >**Note**: you must need an wifi adapter which supports packet injection and monitor mode
 
 
 **installation**
 
-```
+```bash
 git clone https://github.com/akr3ch/wicker-gui
 ```
-```
+```bash
 cd wicker-gui
 ```
-```
+```bash
 sudo ./install.sh
 ```
 
