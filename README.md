@@ -5,7 +5,7 @@
 `This tool is an automated GUI-based WiFi hacking tool or simply a shell script! Whether it can save your valuable time or just serve as a handy shell script, automate your WiFi hacking with Wicker-GUI`
 
 >**Note**: you must need a wifi adapter which supports packet injection and monitor mode
-
+* [Enable monitor mode on TL-WN722N v2/3 wifi adapter](https://github.com/akr3ch/TL-WN722N)
 
 **installation**
 
